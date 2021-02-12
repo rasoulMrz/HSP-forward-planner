@@ -1,6 +1,7 @@
 from Utils import read_lines
 from Problem import Problem
 from Domain import Domain
+from Delta import compute_delta, delta2
 
 domain = Domain.from_lines(read_lines("world/domain.txt"))
 
@@ -15,6 +16,7 @@ while(True):
     print(problem.goals)
     print("State: ")
     print(state)
+
     if(state.contains(problem.goals)):
         print("GOAL ACHIEVED!")
         break
@@ -22,8 +24,11 @@ while(True):
     
     applicables = state.get_applicable_actions(domain)
     for i, a in enumerate(applicables):
-        print(i, a)
-    
+        a_s = a.apply(state)
+        mem = compute_delta(a_s, domain)
+        delta = delta2(problem.goals, mem)
+        print(i, a, delta)
+
     next_state = None
     while(next_state is None):
         i = int(input("Select action:"))
