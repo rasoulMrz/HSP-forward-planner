@@ -2,6 +2,7 @@ from Utils import read_lines
 from Problem import Problem
 from Domain import Domain
 from Delta import compute_delta, delta2
+from RDelta import delta2 as rdelta2
 
 domain = Domain.from_lines(read_lines("world/domain.txt"))
 
@@ -27,7 +28,8 @@ while(True):
         a_s = a.apply(state)
         mem = compute_delta(a_s, domain)
         delta = delta2(problem.goals, mem)
-        print(i, a, delta)
+        rdelta = rdelta2(problem.goals, {}, problem)
+        print(i, a, delta, rdelta)
 
     next_state = None
     while(next_state is None):
