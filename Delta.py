@@ -11,7 +11,8 @@ def subs(conds, singles=True):
     return res
 
 def delta2(g, mem):
-    g = g.flat_set()
+    if not isinstance(g, set):
+        g = g.flat_set()
     
     if(len(g) == 0):
         return 0
@@ -22,8 +23,6 @@ def delta2(g, mem):
     res = 0
     for p in pairs:
         res = max(res, mem.get(p, 1e10))
-    
-    print(g, res)
     return res
 
 def compute_delta(state, domain):
@@ -35,17 +34,31 @@ def compute_delta(state, domain):
     while(True):
         has_change = False
         applicables = state.get_applicable_actions(domain)
-        for a in applicables:
-            state.add_all(a.add_effects)
-            d2 = delta2(a.preconditions, mem)
-            adds = subs(state.flat_set())
+        for action in applicables:
+            precs = action.preconditions
+            add_effects = action.add_effects
+            state.add_all(add_effects)
+            d2 = delta2(precs, mem)
+            adds = subs(add_effects.flat_set())
             for a in adds:
                 old = mem.get(a, 1e10)
                 new = 1 + d2
                 if(new < old):
-                    print(a, new)
                     has_change = True
                     mem[a] = new
-        input()                    
+            
+            adds = add_effects.flat_set()
+            diff = state.flat_set().difference(adds)
+            for a in adds:
+                for b in diff:
+                    d2 = delta2(precs.flat_set().union(set([b])), mem)
+                    s = [a, b]
+                    s.sort()
+                    pair = ','.join(s)
+                    old = mem.get(pair, 1e10)
+                    new = 1 + d2
+                    if(new < old):
+                        has_change = True
+                        mem[pair] = new                
         if(not has_change):
             return mem
