@@ -4,7 +4,7 @@ from Domain import Domain
 from Delta import compute_delta, delta2
 
 domain = Domain.from_lines(read_lines("world/domain.txt"))
-problem = Problem.from_lines(read_lines("world/twelve-step.txt"), domain)
+problem = Problem.from_lines(read_lines("world/sussman-anomaly.txt"), domain)
 
 def check_loop(state, seen):
   for s in seen:
@@ -18,12 +18,12 @@ def search(state, goal, trajectory, seen):
   if(state.contains(goal)):
         return True, trajectory
 
-  applicables = state.get_applicable_actions(domain)
+  applicables = state.get_applicable_actions(problem)
   
   action_delta_s = []
   for a in applicables:
     a_s = a.apply(state)
-    mem = compute_delta(a_s, domain)
+    mem = compute_delta(a_s, problem)
     delta = delta2(problem.goals, mem)
     action_delta_s.append((a, delta, a_s))
   

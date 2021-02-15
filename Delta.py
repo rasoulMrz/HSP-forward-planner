@@ -25,7 +25,7 @@ def delta2(g, mem):
         res = max(res, mem.get(p, 1e10))
     return res
 
-def compute_delta(state, domain):
+def compute_delta(state, problem):
     state = state.clone()
     mem = {}
     for a in subs(state.flat_set()):
@@ -33,7 +33,7 @@ def compute_delta(state, domain):
 
     while(True):
         has_change = False
-        applicables = state.get_applicable_actions(domain)
+        applicables = state.get_applicable_actions(problem)
         for action in applicables:
             precs = action.preconditions
             add_effects = action.add_effects

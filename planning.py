@@ -23,10 +23,10 @@ while(True):
         break
     print("applicables: ")
     
-    applicables = state.get_applicable_actions(domain)
+    applicables = state.get_applicable_actions(problem)
     for i, a in enumerate(applicables):
         a_s = a.apply(state)
-        mem = compute_delta(a_s, domain)
+        mem = compute_delta(a_s, problem)
         delta = delta2(problem.goals, mem)
         rdelta = rdelta2(problem.goals, {}, problem)
         print(i, a, delta, rdelta)

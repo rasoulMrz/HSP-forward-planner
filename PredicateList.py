@@ -48,9 +48,9 @@ class PredicateList():
             p = a.split()
             self.add(p[0], p[1:])
             
-    def get_applicable_actions(self, domain):
+    def get_applicable_actions(self, problem):
         actions = []
-        for operator in domain.operators:
+        for operator in problem.domain.operators:
             preconditions = operator.preconditions
 
             flat_precs = []
@@ -61,19 +61,23 @@ class PredicateList():
                 flat_precs += [(name, params) for params in preconditions._preds[name]]
             
             if flat_precs is not None:
-                actions += self.find_applicables({}, flat_precs, operator, domain)
+                actions += self.find_applicables({}, flat_precs, operator, problem)
         
         return actions
 
 
-    def find_applicables(self, assignments, rem_precs, operator, domain):
+    def find_applicables(self, assignments, rem_precs, operator, problem):
         if(len(rem_precs) == 0):
-            ## FIXME
-            # if(len(assignments) != len(operator.params)):
-            #     for p in operator.params:
-            #         if p not in assignments:
-            #             for o in domain.objects:
-            #                 assignments[p] = 
+            if(len(assignments) != len(operator.params)):
+                actions = []
+                for p in operator.params:
+                    if p not in assignments:
+                        for o in problem.objects:
+                            extras = {}
+                            extras[p] = o
+                            extras.update(assignments)
+                            actions += find_applicables(extras, rem_precs, operator, problem)
+                        return actions
             return [Action(operator, assignments)]
         
         prec = rem_precs[0]
@@ -92,7 +96,7 @@ class PredicateList():
                     extras[args[i]] = params[i]
             if extras != None:
                 extras.update(assignments)
-                actions += self.find_applicables(extras, rem_precs[1:], operator, domain)
+                actions += self.find_applicables(extras, rem_precs[1:], operator, problem)
 
         return actions
 
