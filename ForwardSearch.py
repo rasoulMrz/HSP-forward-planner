@@ -3,8 +3,10 @@ from Problem import Problem
 from Domain import Domain
 from Delta import compute_delta, delta2
 
-domain = Domain.from_lines(read_lines("world/domain.txt"))
-problem = Problem.from_lines(read_lines("world/sussman-anomaly.txt"), domain)
+domain_pth = input("Please enter path to a domain definition:")
+domain = Domain.from_lines(read_lines(domain_pth))
+problem_pth = input("Please enter path to a problem definition:")
+problem = Problem.from_lines(read_lines(problem_pth), domain)
 
 def check_loop(state, seen):
   for s in seen:
